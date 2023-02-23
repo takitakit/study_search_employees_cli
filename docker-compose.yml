@@ -5,13 +5,15 @@ services:
       dockerfile: ./docker/node/Dockerfile
       context: ./
     tty: true
+    environment:
+      - LOGGER_LEVEL=${LOGGER_LEVEL}
     volumes:
       - ./src:/app
       - node_modules:/app/node_modules
   db:
     build: ./docker/mysql
     ports:
-      - 13306:3306
+      - ${DEV_DB_PORT:-3306}:3306
     volumes:
       - ./docker/mysql/sql:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
