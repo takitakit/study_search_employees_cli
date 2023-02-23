@@ -1,5 +1,9 @@
+'use strict'
+
+require('dotenv').config()
+
 const logger = require('log4js').getLogger()
-logger.level = 'debug'
+logger.level = process.env.LOGGER_LEVEL ?? 'warn'
 
 const fs = require('fs').promises
 
@@ -43,6 +47,21 @@ const main = async () => {
   }
 }
 
+// 標準入力からコマンドを受け付ける
+const prompt = async (msg) => {
+  return new Promise(resolve => {
+    const reader = require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout
+    })
+
+    reader.question(`> ${msg}\n`, answer => {
+      reader.close()
+      resolve(answer.trim())
+    })
+  })
+}
+
 // 社員の検索
 const searchEmployees = async (mode, conditions) => {
 
@@ -59,7 +78,7 @@ const searchEmployees = async (mode, conditions) => {
     // 名前検索
     conditions.name = conditions.name.replace(/%/, '\\%')
     query.where('employees.name', 'like', `%${conditions.name}%`)
-  } else if (mode == 'Year') {
+  } else if (mode === 'Year') {
     // 勤続年数検索
     query.whereRaw('TIMESTAMPDIFF(YEAR, entried, NOW())+1 = ?', conditions.year)
   }
@@ -105,30 +124,12 @@ const clearCache = async () => {
   await fs.readdir('./cache')
     .then(files => {
       files.forEach(file => {
-        fs.unlink(`./cache/${file}`)
+        if (file.match(/^[0-9a-f]+$/)) {
+          fs.unlink(`./cache/${file}`)
+        }
       })
     })
 }
-
-const prompt = async (msg) => {
-  const answer = await question(`> ${msg}\n`)
-  return answer.trim()
-}
-
-const question = question => {
-  const reader = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
-
-  return new Promise(resolve => {
-    reader.question(question, answer => {
-      reader.close()
-      resolve(answer)
-    })
-  })
-}
-
 
 (async () => {
   await main()
