@@ -1,4 +1,9 @@
 {
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "node ./search.js"
+  },
   "dependencies": {
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
