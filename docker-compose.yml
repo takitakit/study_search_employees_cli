@@ -5,6 +5,8 @@ services:
       dockerfile: ./docker/node/Dockerfile
       context: ./
     tty: true
+    depends_on:
+      - db
     environment:
       - LOGGER_LEVEL=${LOGGER_LEVEL:-warn}
     volumes:
