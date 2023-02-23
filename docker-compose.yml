@@ -6,7 +6,7 @@ services:
       context: ./
     tty: true
     environment:
-      - LOGGER_LEVEL=${LOGGER_LEVEL}
+      - LOGGER_LEVEL=${LOGGER_LEVEL:-warn}
     volumes:
       - ./src:/app
       - node_modules:/app/node_modules
